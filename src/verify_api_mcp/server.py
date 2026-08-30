@@ -1,4 +1,4 @@
-"""MCP server: exposes verify_citation and verify_url as tools.
+"""MCP server: exposes verify_citation, verify_url, and verify_package as tools.
 
 A thin HTTP client against the hosted Verify API at https://goodsong.dev,
 authenticated the same way any other API-key caller is
@@ -16,9 +16,10 @@ server = MCPServer(
     name="verify-api",
     title="Verify API",
     description=(
-        "Deterministic, evidence-backed verification for citations and URLs -- "
-        "catches fabricated or retracted citations and dead/altered links before "
-        "an agent repeats them."
+        "Deterministic, evidence-backed verification for citations, URLs, and "
+        "packages -- catches fabricated or retracted citations, dead/altered "
+        "links, and hallucinated or unsafe package names before an agent acts "
+        "on them."
     ),
 )
 
@@ -86,6 +87,25 @@ async def verify_url(
     return await _call_api(
         "/verify/url",
         {"url": url, "expected_content": expected_content, "expected_date": expected_date},
+    )
+
+
+@server.tool(
+    description=(
+        "Verify a package: does it exist, is it deprecated or yanked, and does it have "
+        "known vulnerabilities? Checked against the npm/PyPI/crates.io registry plus "
+        "OSV.dev advisories. Catches an agent installing a hallucinated or squatted "
+        "package name. ecosystem must be one of: npm, pypi, crates."
+    )
+)
+async def verify_package(
+    ecosystem: str,
+    name: str,
+    version: str | None = None,
+) -> dict:
+    return await _call_api(
+        "/verify/package",
+        {"ecosystem": ecosystem, "name": name, "version": version},
     )
 
 

@@ -4,8 +4,8 @@ MCP server for [Verify API](https://goodsong.dev): a pay-per-call verification
 service that gives agents a fast, structured, evidence-backed yes/no/unknown on
 claims they'd otherwise guess at.
 
-Stop your agent from citing things that don't exist. Two tools, one answer each,
-evidence attached.
+Stop your agent from citing things that don't exist, or installing things that
+shouldn't. Three tools, one answer each, evidence attached.
 
 ## Tools
 
@@ -15,6 +15,10 @@ evidence attached.
 - **`verify_url`** -- does a URL resolve, what's the final status and redirect
   chain, is it archived on the Wayback Machine, and (optionally) does expected
   text appear on the page?
+- **`verify_package`** -- does an npm/PyPI/crates.io package exist, is it
+  deprecated or yanked, and does it have known vulnerabilities? Checked against
+  the registry plus OSV.dev advisories. Catches an agent installing a
+  hallucinated or squatted package name.
 
 Every response includes a `verdict` (`confirmed` / `contradicted` / `unknown`),
 the individual `checks` that were run, and `evidence` with source URLs so a
