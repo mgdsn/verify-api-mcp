@@ -33,13 +33,15 @@ pip install verify-api-mcp
 
 ## Configure
 
-Get a free API key (100 calls, no card required):
+Get an API key by subscribing to a plan at [goodsong.dev/#pricing](https://goodsong.dev/#pricing)
+(Solo, $15/mo, or Team, $49/mo) -- the key is issued immediately on the
+checkout success page. There's no free tier, but no commitment either: the
+same API also accepts [x402](https://www.x402.org) pay-per-call (no key, no
+account, $0.005/call) if you'd rather try it that way first -- this MCP
+server specifically needs a key, since x402 requires a wallet most MCP
+clients don't have.
 
-```bash
-curl -X POST https://goodsong.dev/signup
-```
-
-Then add to your MCP client's config (e.g. `mcp.json`):
+Then add your key to your MCP client's config (e.g. `mcp.json`):
 
 ```json
 {
