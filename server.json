@@ -4,17 +4,17 @@
   "title": "Verify API",
   "description": "Evidence-backed verification for citations, URLs, and packages -- for agents.",
   "repository": { "url": "https://github.com/mgdsn/verify-api-mcp", "source": "github" },
-  "version": "0.2.0",
+  "version": "0.2.1",
   "packages": [
     {
       "registryType": "pypi",
       "identifier": "verify-api-mcp",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "transport": { "type": "stdio" },
       "environmentVariables": [
         {
           "name": "VERIFY_API_KEY",
-          "description": "API key from POST /signup at https://goodsong.dev/signup",
+          "description": "API key from subscribing at https://goodsong.dev/#pricing",
           "isRequired": true,
           "isSecret": true,
           "format": "string"
