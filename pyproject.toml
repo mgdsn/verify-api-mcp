@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "verify-api-mcp"
-version = "0.2.1"
-description = "MCP server for Verify API -- evidence-backed citation, URL, and package verification for agents."
+version = "0.3.0"
+description = "MCP server for Verify API -- evidence-backed citation, URL, package, repo, and case verification for agents."
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.10"

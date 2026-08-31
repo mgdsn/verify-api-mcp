@@ -5,7 +5,7 @@ service that gives agents a fast, structured, evidence-backed yes/no/unknown on
 claims they'd otherwise guess at.
 
 Stop your agent from citing things that don't exist, or installing things that
-shouldn't. Three tools, one answer each, evidence attached.
+shouldn't. Five tools, one answer each, evidence attached.
 
 ## Tools
 
@@ -19,6 +19,14 @@ shouldn't. Three tools, one answer each, evidence attached.
   deprecated or yanked, and does it have known vulnerabilities? Checked against
   the registry plus OSV.dev advisories. Catches an agent installing a
   hallucinated or squatted package name.
+- **`verify_repo`** -- does a GitHub repo exist, is it archived or disabled?
+  Checked against the GitHub REST API. Catches an agent recommending or
+  depending on a renamed, taken-down, or abandoned repo.
+- **`verify_case`** -- does a legal case citation exist, and does the given
+  case name match the canonical record? Checked against CourtListener. Catches
+  a fabricated case citation, including a real-looking citation number paired
+  with an invented case name. Existence only -- does not check whether a case
+  is still good law.
 
 Every response includes a `verdict` (`confirmed` / `contradicted` / `unknown`),
 the individual `checks` that were run, and `evidence` with source URLs so a
@@ -33,13 +41,13 @@ pip install verify-api-mcp
 
 ## Configure
 
-Get an API key by subscribing to a plan at [goodsong.dev/#pricing](https://goodsong.dev/#pricing)
-(Solo, $15/mo, or Team, $49/mo) -- the key is issued immediately on the
-checkout success page. There's no free tier, but no commitment either: the
-same API also accepts [x402](https://www.x402.org) pay-per-call (no key, no
-account, $0.005/call) if you'd rather try it that way first -- this MCP
-server specifically needs a key, since x402 requires a wallet most MCP
-clients don't have.
+The primary way to use Verify API is [x402](https://www.x402.org) pay-per-call
+(no key, no account, from $0.005/call -- $0.01 for `verify_case`) -- but this
+MCP server specifically needs a subscription key instead, since x402 requires
+a wallet most MCP clients don't have. Get one by subscribing to a plan at
+[goodsong.dev/#pricing](https://goodsong.dev/#pricing) (Solo, $15/mo, or Team,
+$49/mo) -- the key is issued immediately on the checkout success page. There's
+no free tier.
 
 Then add your key to your MCP client's config (e.g. `mcp.json`):
 

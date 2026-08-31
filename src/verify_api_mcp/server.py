@@ -1,4 +1,5 @@
-"""MCP server: exposes verify_citation, verify_url, and verify_package as tools.
+"""MCP server: exposes verify_citation, verify_url, verify_package,
+verify_repo, and verify_case as tools.
 
 A thin HTTP client against the hosted Verify API at https://goodsong.dev,
 authenticated the same way any other API-key caller is
@@ -16,10 +17,10 @@ server = MCPServer(
     name="verify-api",
     title="Verify API",
     description=(
-        "Deterministic, evidence-backed verification for citations, URLs, and "
-        "packages -- catches fabricated or retracted citations, dead/altered "
-        "links, and hallucinated or unsafe package names before an agent acts "
-        "on them."
+        "Deterministic, evidence-backed verification for citations, URLs, packages, "
+        "GitHub repos, and legal case citations -- catches fabricated or retracted "
+        "citations, dead/altered links, hallucinated or unsafe dependencies, and "
+        "abandoned repos before an agent acts on them."
     ),
 )
 
@@ -28,7 +29,10 @@ async def _call_api(path: str, payload: dict) -> dict:
     if not VERIFY_API_KEY:
         raise ToolError(
             "No API key configured for this MCP server. Set VERIFY_API_KEY in the "
-            "client's MCP config to a key from POST /signup at https://goodsong.dev/signup."
+            "client's MCP config to a key from subscribing at "
+            "https://goodsong.dev/#pricing (no free tier). If you'd rather not "
+            "subscribe, the same API also accepts x402 pay-per-call directly -- "
+            "see https://goodsong.dev for details -- but MCP itself always needs a key."
         )
     body = {k: v for k, v in payload.items() if v is not None}
     try:
@@ -107,6 +111,29 @@ async def verify_package(
         "/verify/package",
         {"ecosystem": ecosystem, "name": name, "version": version},
     )
+
+
+@server.tool(
+    description=(
+        "Verify a GitHub repo: does it exist, is it archived or disabled? Catches an "
+        "agent recommending or depending on a repo that's been renamed, taken down, "
+        "or abandoned. Checked against the GitHub REST API."
+    )
+)
+async def verify_repo(owner: str, repo: str) -> dict:
+    return await _call_api("/verify/repo", {"owner": owner, "repo": repo})
+
+
+@server.tool(
+    description=(
+        "Verify a legal case citation: does it exist, and does the given case name "
+        "match the canonical record? Catches a fabricated case citation, including a "
+        "real-looking citation number paired with an invented case name. Checked "
+        "against CourtListener. Does not check whether a case is still good law."
+    )
+)
+async def verify_case(citation: str, case_name: str | None = None) -> dict:
+    return await _call_api("/verify/case", {"citation": citation, "case_name": case_name})
 
 
 def main() -> None:
