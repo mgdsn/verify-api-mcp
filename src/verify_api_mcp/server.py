@@ -1,5 +1,5 @@
 """MCP server: exposes verify_citation, verify_url, verify_package,
-verify_repo, and verify_case as tools.
+verify_repo, verify_case, and verify_seller as tools.
 
 A thin HTTP client against the hosted Verify API at https://goodsong.dev,
 authenticated the same way any other API-key caller is
@@ -18,9 +18,10 @@ server = MCPServer(
     title="Verify API",
     description=(
         "Deterministic, evidence-backed verification for citations, URLs, packages, "
-        "GitHub repos, and legal case citations -- catches fabricated or retracted "
-        "citations, dead/altered links, hallucinated or unsafe dependencies, and "
-        "abandoned repos before an agent acts on them."
+        "GitHub repos, legal case citations, and x402 sellers -- catches fabricated or "
+        "retracted citations, dead/altered links, hallucinated or unsafe dependencies, "
+        "abandoned repos, and inconsistent or sanctioned x402 marketplace listings "
+        "before an agent acts on them."
     ),
 )
 
@@ -134,6 +135,21 @@ async def verify_repo(owner: str, repo: str) -> dict:
 )
 async def verify_case(citation: str, case_name: str | None = None) -> dict:
     return await _call_api("/verify/case", {"citation": citation, "case_name": case_name})
+
+
+@server.tool(
+    description=(
+        "Verify an x402 seller before paying it: does it exist and respond with a "
+        "well-formed 402 challenge, is its own declared input/output schema internally "
+        "consistent, and is its payout address sanctioned? Checked live against the "
+        "seller itself plus a sanctions oracle and on-chain wallet history (Base payTo "
+        "addresses only). Confirms the checkable things about a seller check out -- not "
+        "a guarantee of trustworthiness, which no free source can promise. method "
+        "defaults to POST; set it to GET if that's what triggers the seller's 402."
+    )
+)
+async def verify_seller(resource_url: str, method: str | None = None) -> dict:
+    return await _call_api("/verify/seller", {"resource_url": resource_url, "method": method})
 
 
 def main() -> None:

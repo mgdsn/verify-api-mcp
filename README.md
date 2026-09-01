@@ -4,8 +4,9 @@ MCP server for [Verify API](https://goodsong.dev): a pay-per-call verification
 service that gives agents a fast, structured, evidence-backed yes/no/unknown on
 claims they'd otherwise guess at.
 
-Stop your agent from citing things that don't exist, or installing things that
-shouldn't. Five tools, one answer each, evidence attached.
+Stop your agent from citing things that don't exist, installing things that
+shouldn't, or paying sellers that don't check out. Six tools, one answer each,
+evidence attached.
 
 ## Tools
 
@@ -27,6 +28,12 @@ shouldn't. Five tools, one answer each, evidence attached.
   a fabricated case citation, including a real-looking citation number paired
   with an invented case name. Existence only -- does not check whether a case
   is still good law.
+- **`verify_seller`** -- before paying an x402 seller, does it exist and
+  respond with a well-formed 402 challenge, is its own declared input/output
+  schema internally consistent, and is its payout address sanctioned? Checked
+  live against the seller itself plus a sanctions oracle and on-chain wallet
+  history (Base payTo addresses only). Confirms the checkable things check
+  out -- not a guarantee of trustworthiness.
 
 Every response includes a `verdict` (`confirmed` / `contradicted` / `unknown`),
 the individual `checks` that were run, and `evidence` with source URLs so a
