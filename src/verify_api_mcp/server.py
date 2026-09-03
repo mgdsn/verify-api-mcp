@@ -1,5 +1,5 @@
 """MCP server: exposes verify_citation, verify_url, verify_package,
-verify_repo, verify_case, and verify_seller as tools.
+verify_repo, verify_case, verify_filing, and verify_seller as tools.
 
 A thin HTTP client against the hosted Verify API at https://goodsong.dev,
 authenticated the same way any other API-key caller is
@@ -18,10 +18,11 @@ server = MCPServer(
     title="Verify API",
     description=(
         "Deterministic, evidence-backed verification for citations, URLs, packages, "
-        "GitHub repos, legal case citations, and x402 sellers -- catches fabricated or "
-        "retracted citations, dead/altered links, hallucinated or unsafe dependencies, "
-        "abandoned repos, and inconsistent or sanctioned x402 marketplace listings "
-        "before an agent acts on them."
+        "GitHub repos, legal case citations, SEC filings, and x402 sellers -- catches "
+        "fabricated or retracted citations, dead/altered links, hallucinated or unsafe "
+        "dependencies, abandoned repos, misattributed filing citations, and "
+        "inconsistent or sanctioned x402 marketplace listings before an agent acts on "
+        "them."
     ),
 )
 
@@ -135,6 +136,32 @@ async def verify_repo(owner: str, repo: str) -> dict:
 )
 async def verify_case(citation: str, case_name: str | None = None) -> dict:
     return await _call_api("/verify/case", {"citation": citation, "case_name": case_name})
+
+
+@server.tool(
+    description=(
+        "Verify an SEC filing: given a filer's CIK and a claimed accession number, does "
+        "that filing actually exist, and does its form type/filing date match what's "
+        "claimed? Checked against SEC EDGAR's submissions API. Catches a fabricated or "
+        "misattributed filing citation, including a real-looking accession number "
+        "paired with an invented form type or date."
+    )
+)
+async def verify_filing(
+    cik: str,
+    accession_number: str,
+    form_type: str | None = None,
+    filed_date: str | None = None,
+) -> dict:
+    return await _call_api(
+        "/verify/filing",
+        {
+            "cik": cik,
+            "accession_number": accession_number,
+            "form_type": form_type,
+            "filed_date": filed_date,
+        },
+    )
 
 
 @server.tool(

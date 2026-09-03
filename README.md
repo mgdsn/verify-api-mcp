@@ -5,8 +5,8 @@ service that gives agents a fast, structured, evidence-backed yes/no/unknown on
 claims they'd otherwise guess at.
 
 Stop your agent from citing things that don't exist, installing things that
-shouldn't, or paying sellers that don't check out. Six tools, one answer each,
-evidence attached.
+shouldn't, or paying sellers that don't check out. Seven tools, one answer
+each, evidence attached.
 
 ## Tools
 
@@ -28,6 +28,11 @@ evidence attached.
   a fabricated case citation, including a real-looking citation number paired
   with an invented case name. Existence only -- does not check whether a case
   is still good law.
+- **`verify_filing`** -- given a filer's SEC CIK and a claimed accession
+  number, does that filing exist, and does its form type/filing date match
+  what's claimed? Checked against SEC EDGAR's submissions API. Catches a
+  fabricated or misattributed filing citation, including a real-looking
+  accession number paired with an invented form type or date.
 - **`verify_seller`** -- before paying an x402 seller, does it exist and
   respond with a well-formed 402 challenge, is its own declared input/output
   schema internally consistent, and is its payout address sanctioned? Checked
