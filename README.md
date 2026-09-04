@@ -5,7 +5,7 @@ service that gives agents a fast, structured, evidence-backed yes/no/unknown on
 claims they'd otherwise guess at.
 
 Stop your agent from citing things that don't exist, installing things that
-shouldn't, or paying sellers that don't check out. Seven tools, one answer
+shouldn't, or paying sellers that don't check out. Eight tools, one answer
 each, evidence attached.
 
 ## Tools
@@ -33,6 +33,11 @@ each, evidence attached.
   what's claimed? Checked against SEC EDGAR's submissions API. Catches a
   fabricated or misattributed filing citation, including a real-looking
   accession number paired with an invented form type or date.
+- **`verify_drug`** -- given a claim_type (`approval`, `ndc`, or `recall`) and
+  its identifier, does that FDA record exist, and does the given name match
+  the canonical record? Checked against openFDA. Catches a fabricated or
+  misattributed drug approval, NDC listing, or recall citation.
+  Existence/status only -- not medical advice.
 - **`verify_seller`** -- before paying an x402 seller, does it exist and
   respond with a well-formed 402 challenge, is its own declared input/output
   schema internally consistent, and is its payout address sanctioned? Checked

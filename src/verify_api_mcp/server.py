@@ -1,5 +1,6 @@
 """MCP server: exposes verify_citation, verify_url, verify_package,
-verify_repo, verify_case, verify_filing, and verify_seller as tools.
+verify_repo, verify_case, verify_filing, verify_drug, and verify_seller
+as tools.
 
 A thin HTTP client against the hosted Verify API at https://goodsong.dev,
 authenticated the same way any other API-key caller is
@@ -18,11 +19,11 @@ server = MCPServer(
     title="Verify API",
     description=(
         "Deterministic, evidence-backed verification for citations, URLs, packages, "
-        "GitHub repos, legal case citations, SEC filings, and x402 sellers -- catches "
-        "fabricated or retracted citations, dead/altered links, hallucinated or unsafe "
-        "dependencies, abandoned repos, misattributed filing citations, and "
-        "inconsistent or sanctioned x402 marketplace listings before an agent acts on "
-        "them."
+        "GitHub repos, legal case citations, SEC filings, FDA drug records, and x402 "
+        "sellers -- catches fabricated or retracted citations, dead/altered links, "
+        "hallucinated or unsafe dependencies, abandoned repos, misattributed filing "
+        "or drug-record citations, and inconsistent or sanctioned x402 marketplace "
+        "listings before an agent acts on them."
     ),
 )
 
@@ -161,6 +162,25 @@ async def verify_filing(
             "form_type": form_type,
             "filed_date": filed_date,
         },
+    )
+
+
+@server.tool(
+    description=(
+        "Verify an FDA drug record: given a claim_type ('approval', 'ndc', or 'recall') and "
+        "its identifier, does that record actually exist, and does the given name match the "
+        "canonical record? Checked against openFDA. Catches a fabricated or misattributed drug "
+        "approval, NDC listing, or recall citation. Existence/status only, not medical advice."
+    )
+)
+async def verify_drug(
+    claim_type: str,
+    identifier: str,
+    expected_name: str | None = None,
+) -> dict:
+    return await _call_api(
+        "/verify/drug",
+        {"claim_type": claim_type, "identifier": identifier, "expected_name": expected_name},
     )
 
 
